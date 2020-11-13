@@ -4,13 +4,18 @@ using System.Xml;
 
 namespace FiguresContainer
 {
-    class Figure
+    class DummyObject
     {
         public int counter;
     }
-    class FiguresContainer : IEnumerable<Figure>
+    class DummyContainer : IEnumerable<DummyObject>
     {
-        List<Figure> figures = new List<Figure>();
+        public delegate void ObjectAddDelegate(DummyObject f);
+
+        public ObjectAddDelegate NotifyDelegate { get; set; }
+        public event ObjectAddDelegate NotifyEvent;
+
+        List<DummyObject> figures = new List<DummyObject>();
 
         public void ToXml(string filename)
         {
@@ -21,12 +26,14 @@ namespace FiguresContainer
             XmlReader reader = XmlReader.Create(filename);
         }
 
-        public void Add(Figure figure)
+        public void Add(DummyObject figure)
         {
             figures.Add(figure);
+            //AddedDelegate(figure);
+            NotifyEvent?.Invoke(figure);
         }
 
-        public Figure GetValue(int index)
+        public DummyObject GetValue(int index)
         {
             return figures[index];
         }
@@ -40,7 +47,7 @@ namespace FiguresContainer
         }
 
         #region Q1
-        public Figure this[int index]
+        public DummyObject this[int index]
         {
             get
             {
@@ -55,9 +62,9 @@ namespace FiguresContainer
             return figures.GetEnumerator();
         }
 
-        public IEnumerator<Figure> GetEnumerator()
+        public IEnumerator<DummyObject> GetEnumerator()
         {
-            return ((IEnumerable<Figure>)figures).GetEnumerator();
+            return ((IEnumerable<DummyObject>)figures).GetEnumerator();
         }
         #endregion
     }
